@@ -12,8 +12,9 @@ void testInsertNearRandom(int size){
 	setup(&list);
 	
 	insert_first(&list, 0);
-	int* item = get_first(&list);
+	
 	for(int i=0; i<size-1; i++){
+		int* item = get_first(&list);
 		int random = rand()%2;
 		if(random==1){
 			item = insert_after(&list, i+1, item);
@@ -242,21 +243,21 @@ int main(){
 	int n = 1000000;
 	list_t list;
 	setup(&list);
-	//printf("Beginning Testing Suite. N is: %d\n", list.N);
-	//testSequentialInsertOFM(&list, 82);
-	//testSequentialDelete(&list, 40);
-	//testRandomInsertOFM(N/4);	
-	//testInsertSortedReverse(100000);
-	//testInsertSortedRandom(1000000);
-	//testInsertSortedVarious();
+	printf("Beginning Testing Suite. N is: %d\n", list.N);
+	testSequentialInsertOFM(&list, 82);
+	testSequentialDelete(&list, 40);
+	testRandomInsertOFM(&list, n/4);	
+	testInsertSortedReverse(100000);
+	testInsertSortedRandom(1000000);
+	testInsertSortedVarious();
 	testInsertNearRandom(1000000);
-	//testInsertSortedRandom(10000);
-	// testMax(1000);
-	// testMax(10000);
-	// testMax(100000);
-	// testMax(1000000);
-	// testInsertSortedReverse(n);
-	// testInsertSortedRandom(n);
+	testInsertSortedRandom(10000);
+	testMax(1000);
+	testMax(10000);
+	testMax(100000);
+	testMax(1000000);
+	testInsertSortedReverse(n);
+	testInsertSortedRandom(n);
 	free(list.items);
 	return 0;
 }

@@ -1,26 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-
-typedef struct _list {
-	int N;
-	int H;
-	int logN;
-	int* items;
-
-} list_t;
-
-
-
-typedef struct _pair_int {
-	int x; // length in array
-	int y; // depth 
-} pair_int;
-
-typedef struct _pair_double {
-	double x;
-	double y;
-} pair_double;
+#include "OrderedFileMaintenance.h"
 
 double get_density(list_t* list, int index, int len) {
 
@@ -86,6 +66,9 @@ pair_double density_bound(list_t* list, int depth) {
 // index: starting position in ofm structure
 // len: area to redistribute
 void redistribute(list_t* list, int index, int len) {
+	list->index = index;
+	list->len = len;
+
 	int *space = (int*)malloc(len*sizeof(*(list->items)));
 	int j = 0;
 
@@ -342,7 +325,7 @@ int* insert_first(list_t*list, int elem){
 	return list->items;
 }
 
-void delete(list_t* list, int index){
+void delete_ofm(list_t* list, int index){
 	int node_index = find_leaf(list, index);
 	int level = list->H;
 	int len = list->logN;
@@ -375,7 +358,7 @@ void delete(list_t* list, int index){
 void delete_here(list_t* list, int* elem_pointer){
 	int elem_index = find_index(list, elem_pointer);
 	if(elem_index>=0 && elem_index<list->N){
-		delete(list, elem_index);
+		delete_ofm(list, elem_index);
 		return;
 	}
 }

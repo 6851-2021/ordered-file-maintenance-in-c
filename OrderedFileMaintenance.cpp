@@ -66,8 +66,8 @@ pair_double density_bound(list_t* list, int depth) {
 // index: starting position in ofm structure
 // len: area to redistribute
 void redistribute(list_t* list, int index, int len) {
-	list->index = index;
-	list->len = len;
+	list->min_index = (list->min_index < index) ? list->min_index : index;
+	list->max_index = (list->max_index > index) ? list->max_index : index + len - 1;
 
 	int *space = (int*)malloc(len*sizeof(*(list->items)));
 	int j = 0;
@@ -99,6 +99,7 @@ void double_list(list_t* list) {
 	list->N*=2;
 	list->logN = (1 << bsr_word(bsr_word(list->N)+1));
 	list->H = bsr_word(list->N/list->logN);
+	printf("%d\n", list->N);
 	list->items = (int*)realloc(list->items, list->N*sizeof(*(list->items)));
 	for (int i = list->N/2; i < list->N; i++) {
 		list->items[i] = -1;
@@ -131,7 +132,7 @@ void scan(list_t* list, int index, int len) {
 }
 
 
-void slide_right(list_t* list, int index) {
+void slide_right(list_t* list, int index) {	
 	int el = list->items[index];
 	while (list->items[++index] != -1) {
 		int temp = list->items[index];
@@ -139,6 +140,18 @@ void slide_right(list_t* list, int index) {
 		el = temp;
 	}
 	list->items[index] = el;
+	list->max_index = (list->max_index > index) ? list->max_index : index;
+}
+
+void slide_left(list_t* list, int index) {	
+	int el = list->items[index];
+	while (list->items[--index] != -1) {
+		int temp = list->items[index];
+		list->items[index] = el;
+		el = temp;
+	}
+	list->items[index] = el;
+	list->min_index = (list->min_index < index) ? list->min_index : index;
 }
 
 // given index, return the starting index of the leaf it is in
@@ -164,6 +177,9 @@ int* find_elem_pointer(list_t* list, int index, int elem){
 }
 
 int* insert( list_t* list, int index, int elem) {
+	list->min_index = index;
+	list->max_index = index;
+
 	int node_index = find_leaf(list, index);
 	int level = list->H;
 	int len = list->logN;
@@ -172,10 +188,13 @@ int* insert( list_t* list, int index, int elem) {
 	if (list->items[index] == -1) {
 		list->items[index] = elem;
 	} else {
-		slide_right(list, index);
+		if(index == list->N - 1) {
+			slide_left(list, index);
+		} else {
+			slide_right(list, index);	
+		}	
 		list->items[index] = elem;
 	}
-
 
 	double density = get_density(list, node_index, len);
 

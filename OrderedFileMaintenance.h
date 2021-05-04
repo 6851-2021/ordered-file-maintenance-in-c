@@ -5,8 +5,8 @@ typedef struct _list {
 	int logN;
 	int* items;
 
-	int index;
-	int len;
+	int min_index;
+	int max_index;
 } list_t;
 
 typedef struct _pair_int {

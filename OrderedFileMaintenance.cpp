@@ -67,7 +67,7 @@ pair_double density_bound(list_t* list, int depth) {
 // len: area to redistribute
 void redistribute(list_t* list, int index, int len) {
 	list->min_index = (list->min_index < index) ? list->min_index : index;
-	list->max_index = (list->max_index > index) ? list->max_index : index + len - 1;
+	list->max_index = (list->max_index > index + len - 1) ? list->max_index : index + len - 1;
 
 	int *space = (int*)malloc(len*sizeof(*(list->items)));
 	int j = 0;
@@ -99,8 +99,12 @@ void double_list(list_t* list) {
 	list->N*=2;
 	list->logN = (1 << bsr_word(bsr_word(list->N)+1));
 	list->H = bsr_word(list->N/list->logN);
-	printf("%d\n", list->N);
-	list->items = (int*)realloc(list->items, list->N*sizeof(*(list->items)));
+	int *new_items = (int*)realloc(list->items, list->N*sizeof(*(list->items)));
+	if (! new_items) {
+		printf("OH FUCKKKK.\n\n");
+		exit(-1);
+	}
+	list->items = new_items;
 	for (int i = list->N/2; i < list->N; i++) {
 		list->items[i] = -1;
 	}
@@ -176,6 +180,16 @@ int* find_elem_pointer(list_t* list, int index, int elem){
 
 }
 
+bool canSlideRight(list_t* list, int index) {
+	while(index < list->N) {
+		if(list->items[index] == -1) {
+			return true;
+		}
+		index += 1;
+	}
+	return false;
+}
+
 int* insert( list_t* list, int index, int elem) {
 	list->min_index = index;
 	list->max_index = index;
@@ -188,12 +202,13 @@ int* insert( list_t* list, int index, int elem) {
 	if (list->items[index] == -1) {
 		list->items[index] = elem;
 	} else {
-		if(index == list->N - 1) {
-			slide_left(list, index);
+		if(!canSlideRight(list, index)) {
+			double_list(list);
+			insert_sorted(list, elem);
 		} else {
 			slide_right(list, index);	
+			list->items[index] = elem;
 		}	
-		list->items[index] = elem;
 	}
 
 	double density = get_density(list, node_index, len);

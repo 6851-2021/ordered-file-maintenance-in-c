@@ -1,8 +1,7 @@
 #include <time.h>
-#include "OrderedFileMaintenance.c"
-
-
-
+#include <cstdlib>
+#include <stdio.h>
+#include "OrderedFileMaintenance.h"
 
 void testInsertNearRandom(int size){
 	printf("Testing Insert Sorted Random  Near for OFM:\n");

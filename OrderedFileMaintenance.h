@@ -1,9 +1,12 @@
+#include "../indirection_group/indirection_group.h"
 
 typedef struct _list {
 	int N;
 	int H;
 	int logN;
-	int* items;
+	int n;
+	int logn;
+	indirection_group** items;
 
 	int min_index;
 	int max_index;
@@ -58,37 +61,37 @@ int find_leaf(list_t *list, int index);
 // len: length of sub-level.
 int find_node(int index, int len);
 
-int *find_elem_pointer(list_t *list, int index, int elem);
+indirection_group **find_elem_pointer(list_t *list, int index, int elem);
 
-int *insert(list_t *list, int index, int elem);
+indirection_group **insert(list_t *list, int index, int elem);
 
 int binary_search(list_t *list, int elem);
 
-int *insert_sorted(list_t *list, int elem);
+indirection_group **insert_sorted(list_t *list, int elem);
 
-int find_index(list_t *list, int *elem_pointer);
+int find_index(list_t *list, indirection_group **elem_pointer);
 
 // given an element pointer, find the next element index after it
-int *get_next_elem_index(list_t *list, int *elem_pointer);
+indirection_group **get_next_elem_index(list_t *list, indirection_group **elem_pointer);
 
 // given an element pointer, find previous element index after it
-int *get_prev_elem_index(list_t *list, int *elem_pointer);
+indirection_group **get_prev_elem_index(list_t *list, indirection_group **elem_pointer);
 
 // given an element value and pointer to an element,
 // insert before it.
-int *insert_before(list_t *list, int new_elem, int *elem_pointer);
+indirection_group **insert_before(list_t *list, int new_elem, indirection_group **elem_pointer);
 
 // returns pointer to the element we just inserted!
-int *insert_after(list_t *list, int new_elem, int *elem_pointer);
+indirection_group **insert_after(list_t *list, int new_elem, indirection_group **elem_pointer);
 
-int *get_first(list_t *list);
+indirection_group **get_first(list_t *list);
 
 // insert as the first item into the list.
-int *insert_first(list_t *list, int elem);
+indirection_group **insert_first(list_t *list, int elem);
 
 void delete_ofm(list_t *list, int index);
 
-void delete_here(list_t *list, int *elem_pointer);
+void delete_here(list_t *list, indirection_group **elem_pointer);
 
 void print_array(list_t *list);
 
